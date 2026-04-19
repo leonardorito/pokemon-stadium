@@ -78,3 +78,9 @@ The Socket.IO handler module is the composition root for the live battle protoco
 - **Frontend**: Vite 8, React 19, TailwindCSS 4, Zustand 5, TypeScript
 - **Database**: MongoDB 7
 - **Infra**: Docker Compose
+
+## Live Demo
+
+[https://pokemon-stadium-frontend-production.up.railway.app](https://pokemon-stadium-frontend-production.up.railway.app)
+
+> Open in two browser tabs to play a full match.
