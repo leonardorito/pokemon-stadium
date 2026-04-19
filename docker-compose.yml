@@ -1,0 +1,49 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - pokemon-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      MONGO_URI: mongodb://mongo:27017/pokemon-stadium
+      PORT: "8080"
+      CLIENT_URL: http://localhost:5173
+      POKEMON_API_URL: https://pokemon-api-92034153384.us-central1.run.app
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - pokemon-net
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_BACKEND_URL: http://localhost:8080
+    environment:
+      VITE_BACKEND_URL: http://localhost:8080
+    ports:
+      - "5173:5173"
+    networks:
+      - pokemon-net
+
+volumes:
+  mongo-data:
+
+networks:
+  pokemon-net:
+    driver: bridge
