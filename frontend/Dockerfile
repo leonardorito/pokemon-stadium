@@ -10,7 +10,8 @@ COPY . .
 ARG VITE_BACKEND_URL
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 RUN npm run build
+RUN npm install -g serve
 
-EXPOSE 5173
+EXPOSE 3000
 
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "5173"]
+CMD ["serve", "dist", "-l", "3000"]
