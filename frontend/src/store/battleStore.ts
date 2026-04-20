@@ -173,7 +173,13 @@ export const useBattleStore = create<BattleState>((set, get) => ({
 
   playAgain: () => {
     set({ ...initial });
-    useLobbyStore.getState().reset();
+    const lobby = useLobbyStore.getState();
+    // Clear playerId too — without this, the JoinPage's `submitted && myPlayerId`
+    // effect would navigate to /lobby on form submit before the server responds
+    // with a fresh playerId, causing a flicker of stale state. Nickname is
+    // preserved so re-joining is one click.
+    lobby.setMyPlayerId(null);
+    lobby.reset();
   },
 
   attack: () => {

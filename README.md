@@ -79,6 +79,19 @@ The Socket.IO handler module is the composition root for the live battle protoco
 - **Database**: MongoDB 7
 - **Infra**: Docker Compose
 
+## Mobile Build
+
+The mobile app is a separate Expo project under `mobile/`. The backend URL is **not** baked in at build time — it's read from `AsyncStorage` via `useBackendUrl`, so a single APK works against any backend (users set the URL in-app).
+
+To produce a production Android APK with EAS:
+
+```bash
+cd mobile
+eas build -p android --profile production
+```
+
+Config lives in `mobile/eas.json` (production profile: `platform: android`, `buildType: apk`).
+
 ## Live Demo
 
 [https://pokemon-stadium-frontend-production.up.railway.app](https://pokemon-stadium-frontend-production.up.railway.app)

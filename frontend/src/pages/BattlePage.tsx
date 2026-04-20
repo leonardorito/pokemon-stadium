@@ -108,6 +108,18 @@ export function BattlePage() {
             isBeingHit={myBeingHit && lastEvent > 0}
             aliveCount={myAlive}
             totalCount={myTeam.length}
+            actionSlot={
+              myActive ? (
+                <StadiumButton
+                  variant="primary"
+                  pulse={isMyTurn && !attackPending && !battleOver}
+                  disabled={attackDisabled}
+                  onClick={attack}
+                >
+                  {attackLabel}
+                </StadiumButton>
+              ) : undefined
+            }
           />
           <div className="panel p-3">
             <BenchRow bench={myBench} isMine />
@@ -138,63 +150,27 @@ export function BattlePage() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
-        <div className="panel flex flex-col p-5">
-          <div className="flex items-center justify-between border-b border-stadium-edge pb-3">
-            <span className="stencil-label text-arc-yellow">▼ Battle Log</span>
-            <span className="font-mono text-[0.6rem] text-white/45 uppercase">
-              {battleLog.length} entries
-            </span>
-          </div>
-          <div className="mt-3 max-h-72 flex-1 overflow-y-auto pr-2 font-mono text-sm text-white/85">
-            {battleLog.length === 0 && (
-              <div className="text-white/35">▸ Waiting for first hit…</div>
-            )}
-            {battleLog.map((line, i) => (
-              <div
-                key={`${i}-${line}`}
-                className="border-b border-stadium-edge/40 py-1.5 last:border-b-0"
-              >
-                <span className="mr-2 text-arc-cyan">[{String(i + 1).padStart(2, '0')}]</span>
-                {line}
-              </div>
-            ))}
-            <div ref={logEndRef} />
-          </div>
+      <div className="panel flex flex-col p-5">
+        <div className="flex items-center justify-between border-b border-stadium-edge pb-3">
+          <span className="stencil-label text-arc-yellow">▼ Battle Log</span>
+          <span className="font-mono text-[0.6rem] text-white/45 uppercase">
+            {battleLog.length} entries
+          </span>
         </div>
-
-        <div className="panel flex flex-col items-center justify-center gap-5 p-8 text-center">
-          <div
-            className={`hud-tag ${
-              isMyTurn ? 'text-arc-yellow' : isOppTurn ? 'text-arc-magenta' : 'text-arc-cyan'
-            }`}
-          >
-            ▸ Action Console
-          </div>
-          <div className="font-display text-2xl text-white uppercase md:text-3xl">
-            {battleOver
-              ? 'Match closed.'
-              : isMyTurn
-                ? attackPending
-                  ? '...'
-                  : 'Strike now.'
-                : 'Hold the line.'}
-          </div>
-          <p className="max-w-xs font-mono text-sm text-white/55">
-            {isMyTurn
-              ? 'Your active pokémon attacks the opposing leader. Damage = max(1, ATK − DEF).'
-              : isOppTurn
-                ? `${opponent?.nickname ?? 'Opponent'} is winding up.`
-                : 'Stand by for the next move.'}
-          </p>
-          <StadiumButton
-            variant="primary"
-            pulse={isMyTurn && !attackPending && !battleOver}
-            disabled={attackDisabled}
-            onClick={attack}
-          >
-            {attackLabel}
-          </StadiumButton>
+        <div className="mt-3 max-h-72 flex-1 overflow-y-auto pr-2 font-mono text-sm text-white/85">
+          {battleLog.length === 0 && (
+            <div className="text-white/35">▸ Waiting for first hit…</div>
+          )}
+          {battleLog.map((line, i) => (
+            <div
+              key={`${i}-${line}`}
+              className="border-b border-stadium-edge/40 py-1.5 last:border-b-0"
+            >
+              <span className="mr-2 text-arc-cyan">[{String(i + 1).padStart(2, '0')}]</span>
+              {line}
+            </div>
+          ))}
+          <div ref={logEndRef} />
         </div>
       </div>
     </div>

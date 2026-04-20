@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { PokemonState } from '../types/api';
 import { spriteFor } from '../utils/sprites';
 
@@ -10,6 +10,9 @@ interface Props {
   isBeingHit?: boolean;
   aliveCount: number;
   totalCount: number;
+  // Rendered below the HP bar — used by BattlePage to put the Attack
+  // button right on the player's active card so they don't have to scroll.
+  actionSlot?: ReactNode;
 }
 
 export function ActivePokemonCard({
@@ -20,6 +23,7 @@ export function ActivePokemonCard({
   isBeingHit = false,
   aliveCount,
   totalCount,
+  actionSlot,
 }: Props) {
   const view: 'front' | 'back' = isMine ? 'back' : 'front';
 
@@ -155,6 +159,9 @@ export function ActivePokemonCard({
             {pokemon.currentHp}/{pokemon.hp}
           </span>
         </div>
+        {actionSlot && (
+          <div className="mt-3 flex justify-center">{actionSlot}</div>
+        )}
       </div>
     </div>
   );

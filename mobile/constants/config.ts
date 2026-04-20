@@ -4,3 +4,5 @@ export const DEFAULT_BACKEND_URL =
 export const LOCALHOST_BACKEND_URL = "http://localhost:8080";
 
 export const BACKEND_URL_STORAGE_KEY = "pokemon-stadium:backendUrl";
+
+export const LOBBY_SESSION_STORAGE_KEY = "pokemon-stadium:lobbySession";

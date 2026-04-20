@@ -11,7 +11,12 @@ function notifyConnection(): void {
 export function connect(url?: string): Socket {
   const target = url ?? import.meta.env.VITE_BACKEND_URL;
   if (!target) throw new Error('No backend URL configured');
-  if (socket && currentUrl === target) return socket;
+  if (socket && currentUrl === target) {
+    // Same URL — reuse the existing socket instance so listeners stay bound.
+    // If it's been disconnected (e.g., user hit "Exit Lobby"), reconnect it.
+    if (!socket.connected) socket.connect();
+    return socket;
+  }
   socket?.disconnect();
   currentUrl = target;
   socket = io(target, {
@@ -31,9 +36,11 @@ export function subscribeConnection(listener: () => void): () => void {
 }
 
 export function disconnect(): void {
+  // Disconnects the underlying socket but keeps the singleton + listener
+  // bindings intact so a later connect() with the same URL reconnects cleanly.
+  // Used by the "Exit Lobby" flow: server runs its disconnect cleanup, then
+  // when the user joins a fresh lobby we re-attach via socket.connect().
   socket?.disconnect();
-  socket = null;
-  currentUrl = null;
 }
 
 export function emit(event: string, data?: unknown): void {

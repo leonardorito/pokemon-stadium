@@ -7,6 +7,8 @@ import {
   selectOpponentTeam,
   useLobbyStore,
 } from '../store/lobbyStore';
+import { useBattleStore } from '../store/battleStore';
+import * as socketService from '../services/socketService';
 import { PlayerPanel } from '../components/PlayerPanel';
 import { StadiumButton } from '../components/StadiumButton';
 
@@ -22,6 +24,20 @@ export function LobbyPage() {
   const opponentTeam = useLobbyStore(selectOpponentTeam);
   const assignPokemon = useLobbyStore((s) => s.assignPokemon);
   const ready = useLobbyStore((s) => s.ready);
+  const setMyPlayerId = useLobbyStore((s) => s.setMyPlayerId);
+  const lobbyReset = useLobbyStore((s) => s.reset);
+  const battleReset = useBattleStore((s) => s.reset);
+
+  const onExit = () => {
+    // Disconnect the socket so the backend's disconnect handler runs leaveLobby
+    // (the server has no explicit leave event). The socket instance is preserved
+    // — re-joining via socketService.connect() reattaches with listeners intact.
+    socketService.disconnect();
+    setMyPlayerId(null);
+    lobbyReset();
+    battleReset();
+    navigate('/');
+  };
 
   const [graceElapsed, setGraceElapsed] = useState(false);
 
@@ -50,6 +66,13 @@ export function LobbyPage() {
 
   return (
     <div className="space-y-10">
+      <button
+        type="button"
+        onClick={onExit}
+        className="font-display text-xs tracking-[0.24em] uppercase text-arc-magenta transition hover:text-arc-yellow"
+      >
+        ← Exit Lobby
+      </button>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h1 className="font-display text-5xl tracking-widest text-white uppercase md:text-6xl">
           Lobby <span className="text-arc-cyan">{code ?? '—'}</span>
